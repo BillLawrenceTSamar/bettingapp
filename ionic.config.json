@@ -1,0 +1,7 @@
+{
+  "name": "betting-express",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

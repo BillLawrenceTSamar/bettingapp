@@ -1,0 +1,58 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary" style="text-align: center;">
+    <ion-title color="light">
+      <b>HOME</b>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" mode="md" color="medium" >
+
+  <ion-card style="border-radius: 20px;">
+
+  <ion-list lines="inset">
+    <ion-item-divider *ngIf="this.list_batches.length < 1">
+      <ion-label color="dark">NO BETS TO SHOW</ion-label>
+    </ion-item-divider>
+    <div *ngFor="let draw of this.list_draw">
+      <ion-item-divider *ngIf="this.draw_bet_count[draw.id] > 0">
+        <ion-label color="warning">
+          <b>{{ draw.name }}:</b> ({{ draw.from.toLocaleTimeString() }} - {{ draw.to.toLocaleTimeString() }})
+        </ion-label> 
+      </ion-item-divider>
+      <div *ngFor="let bet of this.list_batches">
+        <ion-item *ngIf="bet.draw.id == draw.id">
+          <ion-label (click)="this.show_batch_details(bet.content)" >
+            <h2><b>{{ bet.content }}</b></h2>
+            <ion-text color="white">
+              <small>
+                Sent on {{ 
+                  bet.date_placed.toLocaleString('en-US', { hour: '2-digit', minute:'2-digit', hour12: true}) 
+                }} {{ (bet.is_confirmed === true?' confirmed':' waiting confirmation') }}
+              </small>
+            </ion-text>
+            <br/>
+          </ion-label>
+          <ion-thumbnail *ngIf="bet.is_confirmed === true" slot="end">
+            <img src="../../assets/check.png" style="border-radius: 10px;">
+          </ion-thumbnail>
+          <ion-thumbnail *ngIf="bet.is_confirmed === false" slot="end" (click)="this.resend(bet.content,bet.draw)">
+            <img src="../../assets/sync.png" style="border-radius: 10px;">
+          </ion-thumbnail>
+        </ion-item> 
+      </div>
+    </div>
+  </ion-list>
+
+</ion-card>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar style="padding-left: 20px; padding-right: 20px;" >
+    <ion-button color="primary" shape="round" expand="block" size="large" (click)="presentModal()">
+      <b>NEW BATCH</b>
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

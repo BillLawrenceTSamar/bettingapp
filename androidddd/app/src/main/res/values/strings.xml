@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">BettingExpress</string>
+    <string name="title_activity_main">BettingExpress</string>
+    <string name="package_name">betting.express</string>
+    <string name="custom_url_scheme">betting.express</string>
+</resources>

@@ -1,0 +1,56 @@
+<ion-header [translucent]="true">
+  <ion-toolbar style="text-align: center;" color="primary">
+    <ion-title color="light">
+      <b>MY WALLET</b>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" mode="md" color="medium" >
+
+  <ion-card style="border-radius: 20px;">
+    <ion-item>
+      <ion-label class="ion-text-wrap">
+        <ion-text>
+          <h3>Available Wallet Balance:</h3>
+        </ion-text>
+        <ion-text color="primary">
+          <h1 style="margin-bottom: 0px; margin-top: -3px;">Php <b>{{this.balance}}</b></h1>
+        </ion-text>
+      </ion-label>
+      <ion-button size="default" fill="clear" slot="end" (click)="refresh_wallet()">
+        Refresh
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-card>
+
+  <ion-card  style="border-radius: 20px;">
+    <ion-card-header>
+      <ion-card-title><b>Cash-in to Wallet via G-Cash</b></ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+
+      <ion-list lines="full">
+
+        <ion-item>
+          <ion-label position="fixed">Amount: </ion-label>
+          <ion-input type='number' inputtype='numeric' (ionChange)="updateField('amount',$event.target)"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="fixed">Ctrl-No: </ion-label>
+          <ion-input (ionChange)="updateField('control_number',$event.target)"></ion-input>
+        </ion-item>
+      
+        <div style="padding:9px;">
+          <ion-button (click)="topUp()" color="success" size="large" shape="round" expand="block"><b>TOP UP</b></ion-button>
+        </div>
+      
+    </ion-list>
+
+    </ion-card-content>
+  </ion-card>
+
+
+</ion-content>

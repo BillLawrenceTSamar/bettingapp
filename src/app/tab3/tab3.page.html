@@ -1,0 +1,62 @@
+<ion-header [translucent]="true">
+  <ion-toolbar style="text-align: center;" color="primary" >
+    <ion-title color="light">
+      <b>SETTINGS</b>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" color="medium" >
+  <ion-card style="border-radius: 20px;">
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="fixed">STL Receiver: </ion-label>
+        <ion-input type='text' (ionChange)="updateField('receiver_stl',$event.target)" value="{{ this.receiver_stl }}"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="fixed">3D Receiver: </ion-label>
+        <ion-input type='text' (ionChange)="updateField('receiver_3d',$event.target)" value="{{ this.receiver_3d }}"></ion-input> 
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="fixed">Printer ADDR: </ion-label>
+        <ion-input type='text' (ionChange)="updateField('printer_mac_address',$event.target)" value="{{ this.printer_mac_address }}"></ion-input> 
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="fixed">Machine ID: </ion-label>
+        <ion-input type='text' disabled="{{ (this.session_service.machine_id === null?false:true) }}" (ionChange)="updateField('machine_id',$event.target)" value="{{ this.machine_id }}"></ion-input> 
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="fixed">Ref No: </ion-label>
+        <ion-input type='text' disabled="{{ (this.session_service.reference_no === null?false:true) }}" (ionChange)="updateField('reference_no',$event.target)" value="{{ this.reference_no }}"></ion-input> 
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="fixed">Agent Code: </ion-label>
+        <ion-input type='text' disabled="{{ (this.session_service.agent_code === null?false:true) }}" (ionChange)="updateField('agent_code',$event.target)" value="{{ this.agent_code }}"></ion-input> 
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="fixed">Agent Name: </ion-label>
+        <ion-input type='text' disabled="{{ (this.session_service.agent_name === null?false:true) }}" (ionChange)="updateField('agent_name',$event.target)" value="{{ this.agent_name }}"></ion-input> 
+      </ion-item>
+
+      <ion-item style="{{ (this.session_service.activation === null || this.session_service.is_activated() === false?'':'display:none') }}"> 
+        <ion-label position="fixed">Activation: </ion-label>
+        <ion-input type='text' (ionChange)="updateField('activation',$event.target)" value="{{ this.activation }}"></ion-input> 
+      </ion-item>
+
+      <ion-button expand="block" size="large" shape="round" color="primary" (click)="save()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        Save Settings
+      </ion-button>
+      <br/>
+
+    </ion-card-content>
+  </ion-card>
+
+
+</ion-content>

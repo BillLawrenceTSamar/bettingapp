@@ -1,0 +1,6 @@
+{
+	"appId": "betting.express",
+	"appName": "BettingExpress",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}
