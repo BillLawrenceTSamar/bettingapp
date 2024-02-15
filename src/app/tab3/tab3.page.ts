@@ -10,6 +10,7 @@ import { DrawCategories, Session, SessionService } from '../services/session.ser
 })
 export class Tab3Page {
 
+  code_today_3d: string
   receiver_stl: string
   receiver_3d: string
   machine_id: string
@@ -22,6 +23,7 @@ export class Tab3Page {
 
   constructor(private session_service: SessionService,public toastController: ToastController) {
     
+    this.code_today_3d = this.session_service.code_today_3d
     this.machine_id = this.session_service.machine_id
     this.agent_code = this.session_service.agent_code
     this.agent_name = this.session_service.agent_name
@@ -48,6 +50,7 @@ export class Tab3Page {
     this.session_service.agent_name = this.agent_name
     this.session_service.reference_no = this.reference_no
     this.session_service.activation = this.activation
+    this.session_service.code_today_3d = this.code_today_3d 
 
     this.printer_mac_address = this.printer_mac_address.toUpperCase()
     this.session_service.printer_mac_address = this.printer_mac_address

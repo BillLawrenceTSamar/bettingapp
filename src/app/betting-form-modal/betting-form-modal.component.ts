@@ -138,11 +138,11 @@ export class BettingFormModal {
 
         let date = new Date()
         let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-        let qrdata = "|" + this.session_service.agent_code + "|" + this.session_service.agent_name + "|00000000|34|" + date.getTime() + "|" + months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + "|" + this.draw.to.toLocaleString('en-US', { hour: 'numeric', hour12: true }) + "|" + this.qr_bet_string(list_bet) + "|" + this.cost + "00"
+        let qrdata = "|" + this.session_service.agent_code + "|" + this.session_service.agent_name + "|00000000|34|" + date.getTime() + "|" + months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + "|" + this.draw.to.toLocaleString('en-US', { hour: 'numeric', hour12: true })
  
         QRCodeLib.toDataURL(qrdata,{
             errorCorrectionLevel: "L",
-            scale: 6
+            scale: 4
         }).then(qr_base64 => {
 
             if(draw_category == DrawCategories.stl) {
@@ -211,54 +211,96 @@ export class BettingFormModal {
                     })
                 })
     
-    
-            
             }
             else if(draw_category == DrawCategories["3d"]) {
-    
-                let image = ""
-                this.date_string = date.getFullYear() + `-` + (date.getMonth() + 1) + `-` + date.getDate()
+
+
+                let months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
+                let hour_now = (date.getHours() % 12 == 0?"12": date.getHours()%12)
+                let ampm = (date.getHours() < 12?"AM":"PM")         
+
+                this.date_string = months[date.getMonth()] + " " + date.getDate() + "," + date.getFullYear() + " " + String(hour_now).padStart(2,"0") + ":" + String(date.getMinutes()).padStart(2,"0") + " " + ampm
 
                 if(this.draw.to.toLocaleString('en-US', { hour: '2-digit' }) == "11 PM") {
-                    this.time_string = "9:00PM"
+                    this.time_string = "9PM"
                 }
                 else {
-                    this.time_string = this.draw.to.toLocaleString('en-US', { hour: 'numeric', minute:'2-digit', hour12: true }).replace(" ","")
+                    this.time_string = this.draw.to.toLocaleString('en-US', { hour: 'numeric', hour12: true }).replace(" ","")
                 }
 
-                this.ctr_3d = this.betting_service.get_3d_ctr()
-    
+                                        
+                let solat = ""
+        
+                for(let i=0; i< list_bet.length; i++) {
+                    
+                    solat += list_bet[i].number + "            " + list_bet[i].straight + "         " + list_bet[i].ramble
+                    
+                    if(i + 1 < list_bet.length) {
+                        solat += "\n"
+                    }
+
+                }
+
+                //this.ctr_3d = this.betting_service.get_3d_ctr()
+
+
+                //let d = date.getFullYear() + `-` + (date.getMonth() + 1) + `-` + date.getDate()
+                //let t = date.getHours() + `:` + date.getMinutes() + `:` + date.getSeconds() 
+
                 escpos.ESCPOSImage.load(qr_base64).then(qr => {
 
-                    setTimeout(() => {
-    
-                        domtoimage.default.toPng(document.getElementById('sowayi')).then(dataUrl => {
-                            console.log(dataUrl) 
-        
-                            escpos.ESCPOSImage.load(dataUrl).then(logo => {
-                
-                                escposCommands = doc
-                                .marginLeft(0)
-                                .marginRight(0) 
-                                    .image(logo, escpos.BitmapDensity.D24) 
-                                    .align(escpos.TextAlignment.LeftJustification)
-                                    .image(qr, escpos.BitmapDensity.D24)
-                                    .feed(3)
-                                    .generateUInt8Array()
-                
-                                this.bprinter.sendToBluetoothPrinter(this.session_service.printer_mac_address,escposCommands)
-        
-                                this.betting_service.increment_3d_ctr()
-                                this.bets_print_cache = null
-                
-                            })
-        
-                        })
-        
-                    },1000)
+                escposCommands = doc
+                    .align(escpos.TextAlignment.Center)
+                    .text("3D Games")
+                    .text("KD GAMING")
+                    .text("V8.17")
+                    .feed(1)
+                    .align(escpos.TextAlignment.LeftJustification)
+                    .text("Cashier Code: " + this.session_service.agent_code)
+                    .text("Draw Date:" + this.date_string)
+                    .text("Draw Time:" + this.time_string)
+                    .text("Ref. No: " + "2311" + date.getMonth() + date.getFullYear() + date.getDate() + date.getMinutes() + date.getHours() + date.getSeconds() + "MOB")
+                    .feed(2)
+                    .text("Combination  Target    Rambol")
+                    .text(solat)
+                    .feed(1)
+                    .text("Total Amount: " + this.cost) 
+                    .text("Total Bets: " + list_bet.length) 
+                    .text(this.session_service.code_today_3d) 
+                    .align(escpos.TextAlignment.LeftJustification)
+                    .image(qr,escpos.BitmapDensity.D24)
+                    .feed(3)
+                    // .image(logo, escpos.BitmapDensity.D24)
+                    // .align(escpos.TextAlignment.LeftJustification)
+                    // .size(0,0)     
+                    // .font(escpos.FontFamily.C)  
+                    // .text("D: " + d + " T:" + t)
+                    // .size(0,1)
+                    // .text("REF: " + this.betting_service.get_stl_ctr()) 
+                    // .size(0,0)
+                    // .text("Draw " + this.draw.to.toLocaleString('en-US', { hour: 'numeric', hour12: true }))
+                    // .size(0, 0)
+                    // .text(solat) 
+                    // .size(0,1)
+                    // .text("PHP " + this.cost) 
+                    // .size(0,0)
+                    // .text("000000" + date.getFullYear() + date.getMonth() + date.getDate() + date.getHours() + date.getMinutes() + date.getSeconds() + "\n")
+                    // .size(0,0)
+                    // .text("Machine ID : " + this.session_service.machine_id)
+                    // .size(0,0)
+                    // .text("Agent Name : " + this.session_service.agent_name)
+                    // .size(0,0)
+                    // .text(this.session_service.agent_code)
+                    // .feed(2)
+                    // .align(escpos.TextAlignment.Center)
+                    // .image(qr,escpos.BitmapDensity.D24)
+                    // .feed(2)
+                    .generateUInt8Array() 
+                    this.bprinter.sendToBluetoothPrinter(this.session_service.printer_mac_address,escposCommands)
 
                 })
-    
+
+      
             }
 
         })

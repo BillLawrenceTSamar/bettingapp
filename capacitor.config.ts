@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'betting.express',
-  appName: 'BettingExpress',
+  appId: 'com.example.app',
+  appName: 'ionic-app-base',
   webDir: 'www',
   bundledWebRuntime: false
 };

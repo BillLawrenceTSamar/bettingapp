@@ -1,0 +1,183 @@
+<ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-button (click)="dismiss()"><ion-icon name="chevron-back-outline"></ion-icon></ion-button>
+      </ion-buttons>
+      <ion-title><b>NEW BATCH</b></ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content color="medium">
+
+  <ion-card>  
+    <ion-card-content style="padding: 0px;">
+      <ion-card-header>
+
+        <ion-label color="dark">Select Category:</ion-label>
+        <ion-select (ionChange)="set_draw_category($event.target.value)" value="3d">
+          <ion-select-option value="3d">3 Day</ion-select-option>
+          <ion-select-option value="stl">Small Town Lottery</ion-select-option>
+        </ion-select>
+
+        <ion-card-subtitle color="dark">Ongoing Now:</ion-card-subtitle>
+        <ion-card-title>{{ this.draw.name }} <small>{{ this.draw.from.toLocaleTimeString('en-US') }} - {{ this.draw.to.toLocaleTimeString('en-US') }}</small></ion-card-title>
+        <ion-card-subtitle  color="dark">Available Wallet Balance:</ion-card-subtitle>
+        <ion-card-title>Php {{this.wallet_balance}}</ion-card-title>
+      </ion-card-header>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-content>
+      <table>
+        <thead>
+          <tr>
+            <th>Lucky #</th>
+            <th style="min-width: 100px;">Straight</th>
+            <th style="min-width: 100px;">Mix</th>
+            <th style="min-width: 30px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bet of this.bets">
+            <td>{{ bet.number }}</td>
+            <td>{{ bet.straight }}</td>
+            <td>{{ bet.ramble }}</td>
+            <td>
+              <ion-button size="small" color="danger" shape="round" (click)="remove_bet(bet)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+            </td>
+          </tr>
+          <tr *ngIf="this.bets.length < 1">
+            <td colspan="4"> <i>no entry yet</i> </td>
+          </tr>
+        </tbody>
+      </table> 
+      <br/>
+      <ion-button color="success" disabled='{{ this.is_send_button_disabled }}' size="large" fill="solid" shape="round" expand="block" (click)="place_bet()">
+        <b>SEND </b> (Php{{ this.cost }})
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </ion-button>
+      <canvas id="logo_canvas" style="display: none;"></canvas>
+      <canvas id="canvas" style="display: none;"></canvas>
+      
+    </ion-card-content> 
+  </ion-card>
+
+  <div style="position: absolute; left: 1000px;"> 
+    <!-- left: 1000px;  -->
+    <div id="sowayi" style="z-index:0; background-color: white; min-height: 500px; width: 380px !important; min-width: 380px !important; position: absolute;">
+      <img src="../../assets/header.png"> 
+      <h3 style="color: black; font-family: 'Another-Regular'; font-size: 120px; margin-bottom: 14px; margin-top: -16px;">{{ this.ctr_3d }}</h3>
+      <p style="color: black; margin-top: -28px; margin-left: 12px; font-size: 21px; font-family: 'Fontin-Regular'">SMALL</p>
+      <p style="color: black; margin-top: -28px; margin-left: 12px; font-size: 21px; font-family: 'Fontin-Regular'">TOWN</p> 
+      <p style="color: black; margin-top: -26px; margin-left: 12px; font-size: 21px; font-family: 'Fontin-Regular'">LOTTERY</p>
+      <p [innerHTML]="this.to_3d_bet_string(this.bets_print_cache)" style="margin-left: 124px; width: 170px; position: absolute; margin-top: -182px; color: black; font-family: 'WorkSans'; font-size: 32px;"></p>
+      <p style="position: absolute; margin-top: 155px; margin-left: 144px; color: black; font-family: 'WorkSans'; font-size: 24px;">Total: {{ this.cost }}</p>
+      <table cellspacing="0" cellpadding="0" style="margin-left: 134px; position: absolute; margin-top: 184px; border: none; padding:0px; text-align: center; color: black; font-family: Arial, Helvetica, sans-serif; max-width: 230px;">
+        <tr style="border: none;">
+          <td style="border: none; padding-bottom: 10px !important;"></td> 
+          <td style="border: none; padding-bottom: 10px !important; width: 110px; padding: 0px; font-size: 24px;">{{ this.date_string }}</td>
+          <td style="border: none; padding-bottom: 10px !important; width: 3px;"></td>
+          <td style="border: none; padding-bottom: 10px !important; width: 110px; padding: 0px; font-size: 24px;">{{ this.time_string }}</td> 
+          <td style="border: none; padding-bottom: 10px !important; width: 3px;"></td>
+        </tr>
+        <tr style="border: none;">
+          <td style="border: none;"></td>
+          <td style="border: none; border-top: 2px dashed; black;padding:0px; min-width: 110px;font-size: 24px;">DATE</td>
+          <td style="border: none; width: 3px;"></td>
+          <td style="border: none; border-top: 2px dashed; black;padding:0px; min-width: 110px;font-size: 24px;">DRAW</td>
+          <td style="border: none; width: 3px;"></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="qrcode" style="position: absolute;"></div>
+  </div>
+
+  <!-- <ion-text> 
+    {{ this.wallet_balance - this.cost }}
+  </ion-text> -->
+
+</ion-content>
+
+<style>
+
+  table, th, td { 
+    border-bottom: 1px solid #383a3e;
+    border-radius: 6px;
+    width: 100%;
+    text-align-last: center;
+    font-size: 17px;
+    padding: 5px;
+    color: black;
+  }
+
+  .box {
+        /* border-color: #ffc409;
+        border-width: thin;
+        border-style: solid; */
+        border: solid 1px #08152c;
+        border-radius: 6px;
+    }
+
+  tbody {
+    color: white;
+  }
+
+  thead {
+    background-color: #3880ff;
+    color: black;
+  }
+</style>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title color="dark"><small>CREATE AN ENTRY HERE:</small> </ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="primary" fill="solid" expand="block" shape="round" (click)="add_to_list()">
+        <b>ADD</b>
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-row>
+      <ion-col>
+        <ion-list lines="full">
+          <ion-item class="box">
+            <ion-label color="dark" position="floating">NUMBER: </ion-label>
+            <ion-input color="dark" inputmode='numeric' maxlength='3' [value]='this.number' (ionChange)="update_field('number',$event.target)"></ion-input>
+            <!-- <input type="text"/> -->
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      <ion-col>
+        <ion-list lines="full">
+          <ion-item class="box">
+            <ion-label color="dark" position="floating">STRAIGHT: </ion-label>
+            <ion-input color="dark" inputmode='numeric' type='number' [value]='this.straight' (ionChange)="update_field('straight',$event.target)"></ion-input>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+      <ion-col>
+        <ion-list lines="full">
+          <ion-item class="box">
+            <ion-label color="dark" position="floating">MIX: </ion-label>
+            <ion-input color="dark" inputmode='numeric' type='number' [value]='this.ramble' (ionChange)="update_field('ramble',$event.target)"></ion-input>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+
+  <!-- <ion-toolbar>
+    
+      <ion-button color="success" size="large" fill="solid" shape="round" expand="block" (click)="place_bet()">
+        <b>PLACE BET/S</b> ({{ this.cost }})
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </ion-button>
+    
+  </ion-toolbar> -->
+</ion-footer>

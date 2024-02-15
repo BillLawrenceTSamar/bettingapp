@@ -25,6 +25,7 @@ export class SessionService {
     public reference_no: string
     public activation: string
     public printer_mac_address: string
+    public code_today_3d: string
 
     constructor(
         private db_service: DbService, 
@@ -43,6 +44,7 @@ export class SessionService {
         this.agent_name = await this.db_service.get('agent_name')
         this.reference_no = await this.db_service.get('reference_no')
         this.activation = await this.db_service.get('activation')
+        this.code_today_3d = await this.db_service.get('code_today_3d')
         this.printer_mac_address = await this.db_service.get('printer_mac_address')
 
         if(this.printer_mac_address == null || this.printer_mac_address == "") {
@@ -99,6 +101,7 @@ export class SessionService {
         await this.db_service.set('agent_code',this.agent_code)
         await this.db_service.set('agent_name',this.agent_name)
         await this.db_service.set('reference_no',this.reference_no)
+        await this.db_service.set('code_today_3d',this.code_today_3d)
         await this.db_service.set('printer_mac_address',this.printer_mac_address)
         return true
     }
